@@ -1,5 +1,5 @@
 // sw.js — Service Worker
-const CACHE_NAME = 'days-v7';
+const CACHE_NAME = 'days-v8';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
