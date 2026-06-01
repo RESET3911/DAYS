@@ -1,5 +1,5 @@
 // sw.js — Service Worker (App Shell cache)
-const CACHE_NAME = 'days-v1';
+const CACHE_NAME = 'days-v3';
 const PRECACHE = [
   '/DAYS/',
   '/DAYS/index.html',
