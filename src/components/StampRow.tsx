@@ -27,19 +27,32 @@ export function StampRow({ stamps, notes, onAdd, onRemove, onSetNote }: Props) {
     <>
       <div className="flex flex-wrap items-center gap-1.5">
         {stamps.map(s => (
-          <button key={s} onClick={() => open(s)}
-            className="relative flex items-center gap-1 rounded-lg px-1.5 py-1 active:scale-90 transition-all"
+          <div key={s}
+            className="group relative flex items-center gap-1 rounded-lg pl-1.5 pr-1 py-1"
             style={{ background: 'rgba(124,58,237,.08)' }}>
-            <span style={{ fontSize: 18, lineHeight: 1 }}>{s}</span>
-            {notes[s] && (
-              <span className="text-xs truncate" style={{ color: 'var(--text-2)', maxWidth: 90 }}>
-                {notes[s]}
-              </span>
-            )}
-          </button>
+            <button onClick={() => open(s)}
+              className="flex items-center gap-1 active:scale-90 transition-all">
+              <span style={{ fontSize: 18, lineHeight: 1 }}>{s}</span>
+              {notes[s] && (
+                <span className="text-xs truncate" style={{ color: 'var(--text-2)', maxWidth: 90 }}>
+                  {notes[s]}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onRemove(s); }}
+              title="削除"
+              className="flex items-center justify-center rounded-full"
+              style={{
+                width: 16, height: 16, fontSize: 11, lineHeight: 1,
+                background: 'rgba(225,29,72,.12)', color: 'var(--rose)',
+              }}>
+              ✕
+            </button>
+          </div>
         ))}
         <button onClick={onAdd}
-          className="rounded-lg px-2 py-1 text-xs font-bold active:scale-90 transition-all"
+          className="rounded-lg px-2 py-1.5 text-xs font-bold active:scale-90 transition-all"
           style={{ background: 'var(--surface)', border: '1px dashed var(--border)', color: 'var(--text-3)' }}>
           ＋スタンプ
         </button>
