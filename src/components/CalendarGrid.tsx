@@ -108,11 +108,11 @@ export function CalendarGrid({
             const isSat      = idx % 7 === 6;
             const isHol      = !!holiday;
 
-            const visibleEvents = showAlertsOnly ? [] : dayEvents.slice(0, 2);
-            const visibleAlerts = dayAlerts.slice(0, showAlertsOnly ? 3 : 1);
+            const visibleEvents = showAlertsOnly ? [] : dayEvents.slice(0, 3);
+            const visibleAlerts = dayAlerts.slice(0, showAlertsOnly ? 4 : 2);
             const overflow =
-              (showAlertsOnly ? 0 : Math.max(0, dayEvents.length - 2)) +
-              Math.max(0, dayAlerts.length - (showAlertsOnly ? 3 : 1));
+              (showAlertsOnly ? 0 : Math.max(0, dayEvents.length - 3)) +
+              Math.max(0, dayAlerts.length - (showAlertsOnly ? 4 : 2));
 
             // Day number text color
             const numColor = isToday ? '#fff'
@@ -131,8 +131,9 @@ export function CalendarGrid({
                   const stamp = e.dataTransfer.getData('stamp');
                   if (stamp && onStampDrop) onStampDrop(dateStr, stamp);
                 }}
-                className="min-h-16 p-1 cursor-pointer cal-drop-cell"
+                className="p-1 cursor-pointer cal-drop-cell"
                 style={{
+                  minHeight: 92,
                   borderTop: '1px solid var(--border)',
                   background: isToday    ? 'rgba(124,58,237,.07)'
                             : isSelected ? 'rgba(124,58,237,.04)'

@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import type { AlertSettings } from '../hooks/useAlerts';
+import type { CustomTemplate } from '../hooks/useSettings';
 import type { UserId } from '../types';
 
 interface Props {
   userId: UserId;
   alertSettings: AlertSettings;
+  customTemplates: CustomTemplate[];
+  onAddTemplate: (t: Omit<CustomTemplate, 'id'>) => void;
+  onRemoveTemplate: (id: string) => void;
   onAlertChange: (key: keyof AlertSettings, val: boolean) => void;
   onSwitchUser: () => void;
 }
@@ -28,9 +33,24 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 
 const VERSION = 'v1.0';
 
-export function SettingsView({ userId, alertSettings, onAlertChange, onSwitchUser }: Props) {
+export function SettingsView({
+  userId, alertSettings, customTemplates, onAddTemplate, onRemoveTemplate, onAlertChange, onSwitchUser,
+}: Props) {
   const userLabel    = userId === 'saku' ? '👦 けんしん' : '🌸 れなちゃん';
   const partnerLabel = userId === 'saku' ? '🌸 れなちゃん' : '👦 けんしん';
+
+  const [showTpl, setShowTpl] = useState(false);
+  const [tIcon, setTIcon]     = useState('📋');
+  const [tName, setTName]     = useState('');
+  const [tDays, setTDays]     = useState(1);
+  const [tTasks, setTTasks]   = useState('');
+
+  const saveTemplate = () => {
+    if (!tName.trim()) return;
+    const subTasks = tTasks.split('\n').map(s => s.trim()).filter(Boolean).map(title => ({ title }));
+    onAddTemplate({ icon: tIcon || '📋', type: tName.trim(), description: `${subTasks.length}個のサブタスク`, defaultDays: tDays, subTasks });
+    setTIcon('📋'); setTName(''); setTDays(1); setTTasks(''); setShowTpl(false);
+  };
 
   return (
     <div className="flex-1 overflow-y-auto pb-24 px-4 pt-3 flex flex-col gap-4">
@@ -103,8 +123,72 @@ export function SettingsView({ userId, alertSettings, onAlertChange, onSwitchUse
         ))}
       </div>
 
+      {/* Custom templates */}
+      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+        <div className="px-4 py-3 flex items-center justify-between"
+          style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-3)' }}>
+            マイテンプレート
+          </span>
+          <button onClick={() => setShowTpl(v => !v)}
+            className="text-xs font-bold px-2.5 py-1 rounded-lg"
+            style={{ background: 'rgba(124,58,237,.1)', color: 'var(--purple)' }}>
+            {showTpl ? '閉じる' : '＋ 作成'}
+          </button>
+        </div>
+
+        {showTpl && (
+          <div className="px-4 py-3 space-y-2" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+            <div className="flex gap-2">
+              <input value={tIcon} onChange={e => setTIcon(e.target.value)} placeholder="📋"
+                className="w-14 text-center text-lg rounded-xl px-2 py-2 outline-none"
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)' }} />
+              <input value={tName} onChange={e => setTName(e.target.value)} placeholder="テンプレート名"
+                className="flex-1 text-sm rounded-xl px-3 py-2 outline-none"
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }} />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs" style={{ color: 'var(--text-3)' }}>期間</span>
+              <input type="number" min={1} value={tDays} onChange={e => setTDays(Number(e.target.value))}
+                className="w-16 text-sm rounded-xl px-2 py-1.5 outline-none"
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }} />
+              <span className="text-xs" style={{ color: 'var(--text-3)' }}>日</span>
+            </div>
+            <textarea value={tTasks} onChange={e => setTTasks(e.target.value)} rows={3}
+              placeholder={'サブタスク（1行に1つ）\n例: 宿を予約\n例: 持ち物を準備'}
+              className="w-full text-sm rounded-xl px-3 py-2 outline-none resize-none"
+              style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }} />
+            <button onClick={saveTemplate}
+              className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
+              style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)' }}>
+              テンプレートを保存
+            </button>
+          </div>
+        )}
+
+        {customTemplates.length === 0 && !showTpl && (
+          <div className="px-4 py-3 text-xs" style={{ background: 'var(--surface)', color: 'var(--text-3)' }}>
+            よく使う予定をテンプレート化できます
+          </div>
+        )}
+
+        {customTemplates.map((t, i) => (
+          <div key={t.id}
+            className="px-4 py-3 flex items-center gap-3"
+            style={{ background: 'var(--surface)', borderBottom: i < customTemplates.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <span className="text-2xl">{t.icon}</span>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-bold" style={{ color: 'var(--text)' }}>{t.type}</div>
+              <div className="text-xs" style={{ color: 'var(--text-3)' }}>{t.subTasks.length}タスク · {t.defaultDays}日</div>
+            </div>
+            <button onClick={() => onRemoveTemplate(t.id)}
+              className="text-xs px-2 py-1 rounded-lg" style={{ color: 'var(--rose)' }}>削除</button>
+          </div>
+        ))}
+      </div>
+
       <div className="text-center text-xs pb-2" style={{ color: 'var(--text-3)' }}>
-        DAYS {VERSION} · さく &amp; たかはし
+        DAYS {VERSION} · けんしん &amp; れなちゃん
       </div>
     </div>
   );

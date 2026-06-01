@@ -8,6 +8,7 @@ import type { Template } from '../data/templates';
 interface Props {
   initial?: Partial<CalendarEvent>;
   userId: UserId;
+  customTemplates?: import('../hooks/useSettings').CustomTemplate[];
   onSave: (ev: Omit<CalendarEvent, 'id'> | CalendarEvent) => void;
   onDelete?: () => void;
   onClose: () => void;
@@ -36,7 +37,7 @@ const emptyEvent = (date: string, userId: UserId, startTime?: string): Omit<Cale
   repeat: 'none',
 });
 
-export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props) {
+export function EventModal({ initial, userId, customTemplates = [], onSave, onDelete, onClose }: Props) {
   const [showTemplates, setShowTemplates] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   const [form, setForm] = useState<Omit<CalendarEvent, 'id'> & { id?: string }>(
@@ -333,6 +334,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
 
       {showTemplates && (
         <TemplateModal
+          customTemplates={customTemplates}
           onSelect={applyTemplate}
           onClose={() => setShowTemplates(false)}
         />

@@ -1,12 +1,27 @@
 import { TEMPLATES } from '../data/templates';
 import type { Template } from '../data/templates';
+import type { CustomTemplate } from '../hooks/useSettings';
 
 interface Props {
+  customTemplates?: CustomTemplate[];
   onSelect: (t: Template) => void;
   onClose: () => void;
 }
 
-export function TemplateModal({ onSelect, onClose }: Props) {
+function customToTemplate(c: CustomTemplate): Template {
+  return {
+    type: c.type as Template['type'],
+    icon: c.icon,
+    description: c.description,
+    subTasks: c.subTasks.map(s => ({ title: s.title })),
+    defaultDays: c.defaultDays,
+    cashflowCategory: '',
+  };
+}
+
+export function TemplateModal({ customTemplates = [], onSelect, onClose }: Props) {
+  const all: Template[] = [...TEMPLATES, ...customTemplates.map(customToTemplate)];
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
       style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(8px)' }}
@@ -24,12 +39,10 @@ export function TemplateModal({ onSelect, onClose }: Props) {
             style={{ color: 'var(--text)' }}>✕</button>
         </div>
         <div className="p-3 flex flex-col gap-2 max-h-[70vh] overflow-y-auto">
-          {TEMPLATES.map(t => (
-            <button key={t.type} onClick={() => onSelect(t)}
+          {all.map((t, i) => (
+            <button key={`${t.type}_${i}`} onClick={() => onSelect(t)}
               className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all active:scale-95"
-              style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'var(--bg)')}>
+              style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
               <span className="text-3xl flex-shrink-0">{t.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="font-head font-bold text-sm" style={{ color: 'var(--text)' }}>{t.type}</div>

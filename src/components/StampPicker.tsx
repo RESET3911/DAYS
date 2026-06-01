@@ -1,4 +1,6 @@
-// Stamp list: emoji + short label for accessibility
+import { useState } from 'react';
+
+// Default stamp list: emoji + short label
 export const STAMPS = [
   { emoji: '😊', label: '良い日' },
   { emoji: '😔', label: 'しんどい' },
@@ -28,17 +30,28 @@ export const STAMPS = [
 
 interface Props {
   selected: string[];
+  customStamps?: string[];
   onToggle: (stamp: string) => void;
+  onAddCustom?: (emoji: string) => void;
   onClose: () => void;
 }
 
-export function StampPicker({ selected, onToggle, onClose }: Props) {
+export function StampPicker({ selected, customStamps = [], onToggle, onAddCustom, onClose }: Props) {
+  const [custom, setCustom] = useState('');
+
+  const submitCustom = () => {
+    const e = custom.trim();
+    if (e && onAddCustom) { onAddCustom(e); onToggle(e); setCustom(''); }
+  };
+
+  const customItems = customStamps.map(emoji => ({ emoji, label: 'カスタム' }));
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(6px)' }}
       onClick={onClose}>
       <div className="w-full max-w-xl rounded-t-3xl p-4 pb-8 animate-modal shadow-2xl"
-        style={{ background: 'var(--surface)' }}
+        style={{ background: 'var(--surface)', maxHeight: '80dvh', overflowY: 'auto' }}
         onClick={e => e.stopPropagation()}>
 
         <div className="flex justify-between items-center mb-3 px-1">
@@ -48,14 +61,30 @@ export function StampPicker({ selected, onToggle, onClose }: Props) {
           <button onClick={onClose} style={{ color: 'var(--text-3)', fontSize: 18 }}>✕</button>
         </div>
 
+        {/* Custom stamp adder */}
+        {onAddCustom && (
+          <div className="flex gap-2 mb-3">
+            <input
+              value={custom}
+              onChange={e => setCustom(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') submitCustom(); }}
+              placeholder="絵文字を入力して追加 😀"
+              className="flex-1 text-sm rounded-xl px-3 py-2 outline-none"
+              style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+            />
+            <button onClick={submitCustom}
+              className="px-4 rounded-xl text-sm font-bold text-white"
+              style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)' }}>
+              追加
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-6 gap-2">
-          {STAMPS.map(({ emoji, label }) => {
+          {[...STAMPS, ...customItems].map(({ emoji, label }) => {
             const active = selected.includes(emoji);
             return (
-              <button
-                key={emoji}
-                onClick={() => onToggle(emoji)}
-                title={label}
+              <button key={emoji} onClick={() => onToggle(emoji)} title={label}
                 className="flex flex-col items-center justify-center rounded-2xl py-2 gap-0.5 transition-all active:scale-90"
                 style={{
                   background: active ? 'rgba(124,58,237,.12)' : 'var(--bg)',

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CalendarEvent, AlertEvent, Todo } from '../types';
 import { StampPicker } from './StampPicker';
+import { StampRow } from './StampRow';
 import { TodoList } from './TodoList';
 import { DayNote } from './DayNote';
 import { ASSIGNEE_LABELS } from '../data/templates';
@@ -26,9 +27,14 @@ interface Props {
   events:      CalendarEvent[];
   alerts:      AlertEvent[];
   stamps:      string[];
+  stampNotes:  Record<string, string>;
+  customStamps: string[];
   todos:       Todo[];
   noteContent: string;
-  onToggleStamp: (s: string) => Promise<void>;
+  onToggleStamp:    (s: string) => Promise<void>;
+  onRemoveStamp:    (s: string) => Promise<void>;
+  onSetStampNote:   (s: string, note: string) => Promise<void>;
+  onAddCustomStamp: (e: string) => void;
   onAddTodo:   (title: string) => Promise<void>;
   onToggleTodo:(id: string, done: boolean) => Promise<void>;
   onDeleteTodo:(id: string) => Promise<void>;
@@ -38,8 +44,9 @@ interface Props {
 }
 
 export function TodayView({
-  events, alerts, stamps, todos, noteContent,
-  onToggleStamp, onAddTodo, onToggleTodo, onDeleteTodo, onSaveNote,
+  events, alerts, stamps, stampNotes, customStamps, todos, noteContent,
+  onToggleStamp, onRemoveStamp, onSetStampNote, onAddCustomStamp,
+  onAddTodo, onToggleTodo, onDeleteTodo, onSaveNote,
   onEventClick, onAddEvent,
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
@@ -83,23 +90,13 @@ export function TodayView({
 
       {/* Stamps */}
       <Section label="スタンプ">
-        <div className="flex flex-wrap gap-2 items-center">
-          {stamps.length === 0 && (
-            <span className="text-sm" style={{ color: 'var(--text-3)' }}>今日のスタンプを追加しよう</span>
-          )}
-          {stamps.map(s => (
-            <button key={s} onClick={() => onToggleStamp(s)}
-              className="text-2xl leading-none rounded-xl p-1.5 transition-all active:scale-90"
-              style={{ background: 'rgba(124,58,237,.08)', border: '1.5px solid rgba(124,58,237,.2)' }}>
-              {s}
-            </button>
-          ))}
-          <button onClick={() => setShowPicker(true)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold transition-all active:scale-90"
-            style={{ background: 'var(--bg)', border: '1.5px dashed var(--border)', color: 'var(--text-3)' }}>
-            ＋
-          </button>
-        </div>
+        <StampRow
+          stamps={stamps}
+          notes={stampNotes}
+          onAdd={() => setShowPicker(true)}
+          onRemove={onRemoveStamp}
+          onSetNote={onSetStampNote}
+        />
       </Section>
 
       {/* Events */}
@@ -178,7 +175,9 @@ export function TodayView({
       {showPicker && (
         <StampPicker
           selected={stamps}
+          customStamps={customStamps}
           onToggle={onToggleStamp}
+          onAddCustom={onAddCustomStamp}
           onClose={() => setShowPicker(false)}
         />
       )}

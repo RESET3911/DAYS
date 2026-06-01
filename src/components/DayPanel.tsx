@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { CalendarEvent, AlertEvent, Todo } from '../types';
 import { ASSIGNEE_LABELS } from '../data/templates';
 import { StampPicker } from './StampPicker';
+import { StampRow } from './StampRow';
 import { TodoList } from './TodoList';
 import { DayNote } from './DayNote';
 
@@ -19,10 +20,15 @@ interface Props {
   events:       CalendarEvent[];
   alerts:       AlertEvent[];
   stamps:       string[];
+  stampNotes:   Record<string, string>;
+  customStamps: string[];
   todos:        Todo[];
   noteContent:  string;
   showAlertsOnly: boolean;
-  onToggleStamp: (s: string) => Promise<void>;
+  onToggleStamp:   (s: string) => Promise<void>;
+  onRemoveStamp:   (s: string) => Promise<void>;
+  onSetStampNote:  (s: string, note: string) => Promise<void>;
+  onAddCustomStamp:(e: string) => void;
   onAddTodo:    (title: string) => Promise<void>;
   onToggleTodo: (id: string, done: boolean) => Promise<void>;
   onDeleteTodo: (id: string) => Promise<void>;
@@ -32,8 +38,9 @@ interface Props {
 }
 
 export function DayPanel({
-  selectedDate, events, alerts, stamps, todos, noteContent, showAlertsOnly,
-  onToggleStamp, onAddTodo, onToggleTodo, onDeleteTodo, onSaveNote,
+  selectedDate, events, alerts, stamps, stampNotes, customStamps, todos, noteContent, showAlertsOnly,
+  onToggleStamp, onRemoveStamp, onSetStampNote, onAddCustomStamp,
+  onAddTodo, onToggleTodo, onDeleteTodo, onSaveNote,
   onEventClick, onAddClick,
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
@@ -50,11 +57,11 @@ export function DayPanel({
   const dayAlerts = alerts.filter(a => a.date === selectedDate);
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col overflow-hidden"
+    <div className="flex flex-col mt-2"
       style={{ borderTop: '2px solid rgba(124,58,237,.3)' }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 flex-shrink-0"
+      <div className="flex items-center justify-between px-4 py-2 flex-shrink-0 sticky top-0 z-10"
         style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <span className="font-head font-bold text-sm" style={{ color: 'var(--purple)' }}>
           {fmtDate(selectedDate)}
@@ -66,24 +73,18 @@ export function DayPanel({
         </button>
       </div>
 
-      {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto" style={{ background: 'var(--bg)' }}>
+      {/* Body */}
+      <div style={{ background: 'var(--bg)' }}>
 
         {/* Stamps row */}
-        <div className="px-4 py-2.5 flex flex-wrap items-center gap-1.5"
-          style={{ borderBottom: '1px solid var(--border)' }}>
-          {stamps.map(s => (
-            <button key={s} onClick={() => onToggleStamp(s)}
-              className="text-xl leading-none rounded-lg p-1 active:scale-90 transition-all"
-              style={{ background: 'rgba(124,58,237,.08)' }}>
-              {s}
-            </button>
-          ))}
-          <button onClick={() => setShowPicker(true)}
-            className="rounded-lg px-2 py-1 text-xs font-bold active:scale-90 transition-all"
-            style={{ background: 'var(--surface)', border: '1px dashed var(--border)', color: 'var(--text-3)' }}>
-            ＋スタンプ
-          </button>
+        <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--border)' }}>
+          <StampRow
+            stamps={stamps}
+            notes={stampNotes}
+            onAdd={() => setShowPicker(true)}
+            onRemove={onRemoveStamp}
+            onSetNote={onSetStampNote}
+          />
         </div>
 
         {/* Events */}
@@ -158,7 +159,9 @@ export function DayPanel({
       {showPicker && (
         <StampPicker
           selected={stamps}
+          customStamps={customStamps}
           onToggle={onToggleStamp}
+          onAddCustom={onAddCustomStamp}
           onClose={() => setShowPicker(false)}
         />
       )}

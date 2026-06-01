@@ -23,17 +23,27 @@ export function useEvents() {
 
   useEffect(() => {
     const q = query(collection(db, COL), orderBy('date', 'asc'));
-    const unsub = onSnapshot(q, snap => {
-      setEvents(snap.docs.map(d => ({ id: d.id, ...d.data() } as CalendarEvent)));
-      setLoading(false);
-    }, () => setLoading(false));
+    const unsub = onSnapshot(q,
+      snap => {
+        setEvents(snap.docs.map(d => ({ id: d.id, ...d.data() } as CalendarEvent)));
+        setLoading(false);
+      },
+      err => {
+        console.error('useEvents error:', err);
+        setLoading(false);
+      }
+    );
     return unsub;
   }, []);
 
   const addEvent = async (ev: Omit<CalendarEvent, 'id'>) => {
-    await addDoc(collection(db, COL), { ...ev, createdAt: serverTimestamp() });
-    // Notify other user (non-blocking)
-    notifyOtherUser(ev.title, ev.date, ev.createdBy);
+    try {
+      await addDoc(collection(db, COL), { ...ev, createdAt: serverTimestamp() });
+      notifyOtherUser(ev.title, ev.date, ev.createdBy);
+    } catch (err) {
+      console.error('addEvent failed:', err);
+      throw err; // re-throw so EventModal can show error
+    }
   };
 
   const updateEvent = async (id: string, data: Partial<CalendarEvent>) => {

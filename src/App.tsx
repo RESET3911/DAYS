@@ -7,6 +7,8 @@ import { useAnniversaries }  from './hooks/useAnniversaries';
 import { useTodos }          from './hooks/useTodos';
 import { useNotes }          from './hooks/useNotes';
 import { useStamps }         from './hooks/useStamps';
+import { useSettings }       from './hooks/useSettings';
+import { STAMPS }            from './components/StampPicker';
 import { UserSelect }         from './components/UserSelect';
 import { CalendarGrid }       from './components/CalendarGrid';
 import { EventModal }         from './components/EventModal';
@@ -75,7 +77,8 @@ export default function App() {
   const { anniversaries, addAnniversary, deleteAnniversary }    = useAnniversaries();
   const { todosByDate, addTodo, toggleTodo, deleteTodo }        = useTodos(userId);
   const { notesByDate, saveNote }                               = useNotes(userId);
-  const { stampsByDate, toggleStamp }                           = useStamps(userId);
+  const { stampsByDate, stampDayByDate, addStamp, removeStamp, toggleStamp, setStampNote } = useStamps(userId);
+  const { customStamps, addCustomStamp, removeCustomStamp, customTemplates, addCustomTemplate, removeCustomTemplate } = useSettings();
   const [alertSettings, setAlertSettings] = useState<AlertSettings>(DEFAULT_ALERT_SETTINGS);
   const alerts = useAlerts(events, alertSettings);
 
@@ -283,10 +286,15 @@ export default function App() {
         {bottomTab === 'calendar' && calSubView === 'today' && (
           <TodayView
             events={filteredEvents} alerts={alerts}
-            stamps={stampsByDate[fmtD(now)] || []}
+            stamps={stampDayByDate[fmtD(now)]?.stamps || []}
+            stampNotes={stampDayByDate[fmtD(now)]?.notes || {}}
+            customStamps={customStamps}
             todos={todosByDate[fmtD(now)] || []}
             noteContent={notesByDate[fmtD(now)] || ''}
             onToggleStamp={s => toggleStamp(fmtD(now), s)}
+            onRemoveStamp={s => removeStamp(fmtD(now), s)}
+            onSetStampNote={(s, note) => setStampNote(fmtD(now), s, note)}
+            onAddCustomStamp={addCustomStamp}
             onAddTodo={title => addTodo(fmtD(now), title)}
             onToggleTodo={toggleTodo} onDeleteTodo={deleteTodo}
             onSaveNote={saveNote}
@@ -295,29 +303,38 @@ export default function App() {
         )}
 
         {bottomTab === 'calendar' && calSubView === 'month' && (
-          <div className="flex flex-col h-full min-h-0"
-            onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
-            onTouchEnd={e => { const dx = e.changedTouches[0].clientX - touchX.current; if (Math.abs(dx) > 60) navigate(dx < 0 ? 1 : -1); }}>
-            <AnniversaryCountdown anniversaries={anniversaries} userId={userId!} onAdd={addAnniversary} onDelete={deleteAnniversary} />
-            <div className="flex-shrink-0 px-2 pt-2">
-              <CalendarGrid year={year} month={month} events={filteredEvents} alerts={alerts}
-                anniversaries={anniversaries} stampsByDate={stampsByDate}
-                showAlertsOnly={showAlertsOnly} selectedDate={selectedDate}
-                onDayClick={setSelectedDate} onEventClick={openEdit}
-                onStampDrop={(date, stamp) => toggleStamp(date, stamp)} />
+          <div className="flex flex-col h-full min-h-0">
+            {/* Scrollable area: banner + grid + day panel */}
+            <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 120 }}
+              onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
+              onTouchEnd={e => { const dx = e.changedTouches[0].clientX - touchX.current; if (Math.abs(dx) > 80) navigate(dx < 0 ? 1 : -1); }}>
+              <AnniversaryCountdown anniversaries={anniversaries} userId={userId!} onAdd={addAnniversary} onDelete={deleteAnniversary} />
+              <div className="px-2 pt-2">
+                <CalendarGrid year={year} month={month} events={filteredEvents} alerts={alerts}
+                  anniversaries={anniversaries} stampsByDate={stampsByDate}
+                  showAlertsOnly={showAlertsOnly} selectedDate={selectedDate}
+                  onDayClick={setSelectedDate} onEventClick={openEdit}
+                  onStampDrop={(date, stamp) => addStamp(date, stamp)} />
+              </div>
+              <DayPanel selectedDate={selectedDate} events={filteredEvents} alerts={alerts}
+                stamps={stampDayByDate[selectedDate]?.stamps || []}
+                stampNotes={stampDayByDate[selectedDate]?.notes || {}}
+                customStamps={customStamps}
+                todos={todosByDate[selectedDate] || []}
+                noteContent={notesByDate[selectedDate] || ''}
+                showAlertsOnly={showAlertsOnly}
+                onToggleStamp={s => toggleStamp(selectedDate, s)}
+                onRemoveStamp={s => removeStamp(selectedDate, s)}
+                onSetStampNote={(s, note) => setStampNote(selectedDate, s, note)}
+                onAddCustomStamp={addCustomStamp}
+                onAddTodo={title => addTodo(selectedDate, title)}
+                onToggleTodo={toggleTodo} onDeleteTodo={deleteTodo}
+                onSaveNote={saveNote}
+                onEventClick={openEdit} onAddClick={openNew} />
             </div>
-            {/* Stamp shelf — drag stamps onto calendar cells */}
-            <StampShelf onDrop={(date, stamp) => toggleStamp(date, stamp)} />
-            <DayPanel selectedDate={selectedDate} events={filteredEvents} alerts={alerts}
-              stamps={stampsByDate[selectedDate] || []}
-              todos={todosByDate[selectedDate] || []}
-              noteContent={notesByDate[selectedDate] || ''}
-              showAlertsOnly={showAlertsOnly}
-              onToggleStamp={s => toggleStamp(selectedDate, s)}
-              onAddTodo={title => addTodo(selectedDate, title)}
-              onToggleTodo={toggleTodo} onDeleteTodo={deleteTodo}
-              onSaveNote={saveNote}
-              onEventClick={openEdit} onAddClick={openNew} />
+            {/* Fixed stamp shelf above bottom nav */}
+            <StampShelf stamps={[...STAMPS, ...customStamps.map(e => ({ emoji: e, label: 'カスタム' }))]}
+              onDrop={(date, stamp) => addStamp(date, stamp)} />
           </div>
         )}
 
@@ -336,12 +353,18 @@ export default function App() {
         {/* ── Stamp tab ─────────────────────────────────────────────────── */}
         {bottomTab === 'stamp' && (
           <StampTabView stampsByDate={stampsByDate}
-            onToggle={toggleStamp} />
+            customStamps={customStamps}
+            onToggle={toggleStamp}
+            onAddCustom={addCustomStamp}
+            onRemoveCustom={removeCustomStamp} />
         )}
 
         {/* ── Settings tab ──────────────────────────────────────────────── */}
         {bottomTab === 'settings' && (
           <SettingsView userId={userId} alertSettings={alertSettings}
+            customTemplates={customTemplates}
+            onAddTemplate={addCustomTemplate}
+            onRemoveTemplate={removeCustomTemplate}
             onAlertChange={(k, v) => setAlertSettings(s => ({ ...s, [k]: v }))}
             onSwitchUser={clearUser} />
         )}
@@ -353,6 +376,7 @@ export default function App() {
       {/* ── Event form modal ──────────────────────────────────────────── */}
       {showForm && (
         <EventModal initial={formEvent || undefined} userId={userId}
+          customTemplates={customTemplates}
           onSave={handleSave}
           onDelete={formEvent?.id ? handleDelete : undefined}
           onClose={() => setShowForm(false)} />

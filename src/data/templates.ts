@@ -90,11 +90,12 @@ export const TEMPLATES: Template[] = [
 ];
 
 export const EVENT_COLORS: { label: string; value: string; bg: string }[] = [
-  { label: 'パープル', value: '#a78bfa', bg: 'rgba(167,139,250,0.2)' },
-  { label: 'エメラルド', value: '#34d399', bg: 'rgba(52,211,153,0.2)' },
-  { label: 'ローズ',   value: '#fb7185', bg: 'rgba(251,113,133,0.2)' },
-  { label: 'アンバー', value: '#fbbf24', bg: 'rgba(251,191,36,0.2)' },
-  { label: 'スカイ',   value: '#38bdf8', bg: 'rgba(56,189,248,0.2)' },
+  { label: 'ラベンダー', value: '#9b8bc4', bg: 'rgba(155,139,196,0.16)' },
+  { label: 'セージ',     value: '#7fab8f', bg: 'rgba(127,171,143,0.16)' },
+  { label: 'ローズ',     value: '#d18a9c', bg: 'rgba(209,138,156,0.16)' },
+  { label: 'サンド',     value: '#d4af7a', bg: 'rgba(212,175,122,0.16)' },
+  { label: 'スカイ',     value: '#7fa8c9', bg: 'rgba(127,168,201,0.16)' },
+  { label: 'テラコッタ', value: '#c98b6e', bg: 'rgba(201,139,110,0.16)' },
 ];
 
 export const DEFAULT_COLOR = EVENT_COLORS[0].value;
