@@ -210,7 +210,7 @@ export function WeekView({ weekStart, events, onEventClick, onSlotClick, onSwipe
                       top: h * HOUR_PX,
                       left: 0, right: 0,
                       height: 1,
-                      background: 'rgba(255,255,255,0.05)',
+                      background: 'var(--border)',
                       pointerEvents: 'none',
                     }} />
                   ))}
@@ -222,7 +222,7 @@ export function WeekView({ weekStart, events, onEventClick, onSlotClick, onSwipe
                       top: h * HOUR_PX + HOUR_PX / 2,
                       left: 0, right: 0,
                       height: 1,
-                      background: 'rgba(255,255,255,0.025)',
+                      background: 'rgba(0,0,0,0.04)',
                       pointerEvents: 'none',
                     }} />
                   ))}

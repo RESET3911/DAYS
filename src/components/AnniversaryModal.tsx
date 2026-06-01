@@ -58,15 +58,15 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6"
-      style={{ background: 'rgba(8,4,18,.8)', backdropFilter: 'blur(16px)' }}
+      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(16px)' }}
       onClick={onClose}>
       <div className="animate-modal w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col"
-        style={{ background: '#0f0a1e', border: '1px solid rgba(255,255,255,.1)', maxHeight: '90dvh' }}
+        style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 20px 60px rgba(0,0,0,.15)', maxHeight: '90dvh' }}
         onClick={e => e.stopPropagation()}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 flex-shrink-0"
-          style={{ borderBottom: '1px solid rgba(255,255,255,.07)' }}>
+          style={{ borderBottom: '1px solid var(--border)' }}>
           <span className="font-head font-extrabold text-sm">記念日・誕生日</span>
           <div className="flex items-center gap-2">
             <button onClick={() => setAdding(true)}
@@ -114,13 +114,13 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
           {/* Add form */}
           {adding && (
             <div className="p-4 rounded-2xl space-y-3"
-              style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.09)' }}>
+              style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-3)' }}>タイトル</label>
                 <input autoFocus value={form.title} onChange={e => set('title', e.target.value)}
                   placeholder="例: 付き合った記念日・さくの誕生日"
                   className="w-full text-sm rounded-xl px-3 py-2 outline-none"
-                  style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'var(--text)' }}
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                 />
               </div>
 
@@ -132,8 +132,8 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
                     <button key={key} onClick={() => set('type', key)}
                       className="flex-1 py-2 rounded-xl text-xs font-bold"
                       style={{
-                        background: form.type === key ? 'rgba(167,139,250,.25)' : 'rgba(255,255,255,.06)',
-                        border: form.type === key ? '1px solid rgba(167,139,250,.5)' : '1px solid rgba(255,255,255,.08)',
+                        background: form.type === key ? 'rgba(124,58,237,.12)' : 'var(--bg)',
+                        border: form.type === key ? '1px solid rgba(124,58,237,.4)' : '1px solid var(--border)',
                         color: form.type === key ? 'var(--purple)' : 'var(--text-2)',
                       }}>
                       {TYPE_ICON[key]} {label}
@@ -148,7 +148,7 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
                   <label className="block text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-3)' }}>月</label>
                   <select value={form.month} onChange={e => set('month', Number(e.target.value))}
                     className="w-full text-sm rounded-xl px-3 py-2 outline-none"
-                    style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'var(--text)' }}>
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}>
                     {MONTHS.map(m => <option key={m} value={m}>{m}月</option>)}
                   </select>
                 </div>
@@ -157,7 +157,7 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
                   <input type="number" min={1} max={31} value={form.day}
                     onChange={e => set('day', Number(e.target.value))}
                     className="w-full text-sm rounded-xl px-3 py-2 outline-none"
-                    style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'var(--text)' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
                     onChange={e => set('startYear', e.target.value ? Number(e.target.value) : null)}
                     placeholder="例: 2022"
                     className="w-full text-sm rounded-xl px-3 py-2 outline-none"
-                    style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'var(--text)' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
               )}
@@ -187,7 +187,7 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
                     <button key={n} onClick={() => set('notifyDaysBefore', n)}
                       className="flex-1 py-1.5 rounded-lg text-xs font-bold"
                       style={{
-                        background: form.notifyDaysBefore === n ? 'rgba(167,139,250,.25)' : 'rgba(255,255,255,.06)',
+                        background: form.notifyDaysBefore === n ? 'rgba(124,58,237,.12)' : 'var(--bg)',
                         color: form.notifyDaysBefore === n ? 'var(--purple)' : 'var(--text-3)',
                       }}>
                       {n === 0 ? '当日' : `${n}日前`}
@@ -217,7 +217,7 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
               <div className="flex gap-2 pt-1">
                 <button onClick={() => setAdding(false)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-bold"
-                  style={{ background: 'rgba(255,255,255,.06)', color: 'var(--text-2)' }}>
+                  style={{ background: 'var(--surface-hover)', color: 'var(--text-2)', border: '1px solid var(--border)' }}>
                   キャンセル
                 </button>
                 <button onClick={handleSave} disabled={saving || !form.title.trim()}

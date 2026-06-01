@@ -210,19 +210,17 @@ export default function App() {
       className="flex flex-col h-dvh max-w-xl mx-auto relative"
       style={{ background: 'var(--bg)', overflow: 'hidden' }}>
 
-      {/* Background glow orbs */}
+      {/* Subtle light background accent */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
         <div style={{
-          position: 'absolute', top: '-20%', left: '-10%',
-          width: '55%', paddingTop: '55%', borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%)',
-          animation: 'orbFloat 9s ease-in-out infinite alternate',
+          position: 'absolute', top: '-10%', right: '-5%',
+          width: '50%', paddingTop: '50%', borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(124,58,237,.06) 0%,transparent 70%)',
         }} />
         <div style={{
-          position: 'absolute', bottom: '-15%', right: '-5%',
-          width: '45%', paddingTop: '45%', borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(167,139,250,.08) 0%,transparent 70%)',
-          animation: 'orbFloat 11s ease-in-out infinite alternate-reverse',
+          position: 'absolute', bottom: '-10%', left: '-5%',
+          width: '40%', paddingTop: '40%', borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(109,40,217,.04) 0%,transparent 70%)',
         }} />
       </div>
 

@@ -74,23 +74,23 @@ export function CalendarGrid({
 
   return (
     <>
-      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
         {/* Weekday headers */}
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7" style={{ borderBottom: '1px solid var(--border)' }}>
           {WDS.map((w, i) => (
             <div key={w} className="text-center py-2 text-xs font-bold uppercase tracking-wider"
-              style={{ color: i === 0 ? 'var(--rose)' : i === 6 ? '#60a5fa' : 'var(--text-3)' }}>
+              style={{ color: i === 0 ? 'var(--rose)' : i === 6 ? 'var(--sky)' : 'var(--text-3)' }}>
               {w}
             </div>
           ))}
         </div>
 
         {/* Day cells */}
-        <div className="grid grid-cols-7" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="grid grid-cols-7">
           {cells.map((day, idx) => {
             if (!day) return (
               <div key={`empty_${idx}`} className="min-h-16"
-                style={{ borderTop: '1px solid rgba(255,255,255,.04)', background: 'rgba(0,0,0,.15)' }} />
+                style={{ borderTop: '1px solid var(--border)', background: 'rgba(0,0,0,.02)' }} />
             );
 
             const dateStr   = ds(day);
@@ -114,7 +114,7 @@ export function CalendarGrid({
             // Day number text color
             const numColor = isToday ? '#fff'
               : isSun || isHol ? 'var(--rose)'
-              : isSat           ? '#60a5fa'
+              : isSat           ? 'var(--sky)'
               : 'var(--text-2)';
 
             return (
@@ -123,11 +123,11 @@ export function CalendarGrid({
                 onClick={() => onDayClick(dateStr)}
                 className="min-h-16 p-1 cursor-pointer"
                 style={{
-                  borderTop: '1px solid rgba(255,255,255,.04)',
-                  background: isToday    ? 'rgba(167,139,250,.08)'
-                            : isSelected ? 'rgba(167,139,250,.04)'
+                  borderTop: '1px solid var(--border)',
+                  background: isToday    ? 'rgba(124,58,237,.07)'
+                            : isSelected ? 'rgba(124,58,237,.04)'
                             : undefined,
-                  outline: isSelected && !isToday ? '1px solid rgba(167,139,250,.3)' : undefined,
+                  outline: isSelected && !isToday ? '1px solid rgba(124,58,237,.25)' : undefined,
                   outlineOffset: '-1px',
                 }}>
 

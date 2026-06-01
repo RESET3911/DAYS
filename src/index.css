@@ -3,24 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --bg: #080412;
-  --surface: rgba(255,255,255,0.055);
-  --surface-hover: rgba(255,255,255,0.09);
-  --border: rgba(255,255,255,0.09);
-  --border-bright: rgba(255,255,255,0.18);
-  --text: #f0ecff;
-  --text-2: #8b80aa;
-  --text-3: #4a4360;
-  --purple: #a78bfa;
-  --purple-2: #7c3aed;
-  --emerald: #34d399;
-  --emerald-2: #059669;
-  --rose: #fb7185;
-  --amber: #fbbf24;
-  --sky: #38bdf8;
+  --bg:           #f5f4fa;
+  --surface:      #ffffff;
+  --surface-hover:#f3f1fb;
+  --border:       rgba(0,0,0,0.08);
+  --border-bright:rgba(0,0,0,0.16);
+  --text:         #1e1a2e;
+  --text-2:       #6b6480;
+  --text-3:       #a099b8;
+  --purple:       #7c3aed;
+  --purple-2:     #6d28d9;
+  --emerald:      #059669;
+  --emerald-2:    #047857;
+  --rose:         #e11d48;
+  --amber:        #d97706;
+  --sky:          #0284c7;
   --font-head: 'Sora', sans-serif;
   --font-body: 'DM Sans', sans-serif;
-  --radius: 22px;
+  --radius:    22px;
   --radius-sm: 14px;
   --radius-xs: 8px;
 }
@@ -41,11 +41,11 @@ body {
 /* scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
 
 /* shimmer skeleton */
 .skel {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 100%);
+  background: linear-gradient(90deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.09) 50%, rgba(0,0,0,0.04) 100%);
   background-size: 300% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
   border-radius: 6px;
@@ -55,7 +55,6 @@ body {
   100% { background-position: -100% 0; }
 }
 
-/* fade-up animation */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -63,12 +62,11 @@ body {
 .animate-fade-up { animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }
 
 @keyframes modalIn {
-  from { opacity: 0; transform: scale(0.9) translateY(16px); }
+  from { opacity: 0; transform: scale(0.95) translateY(12px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
-.animate-modal { animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-modal { animation: modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-/* orb float */
 @keyframes orbFloat {
   from { transform: translate(0,0) scale(1); }
   to   { transform: translate(30px,20px) scale(1.08); }

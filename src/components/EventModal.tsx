@@ -82,20 +82,21 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
   return (
     <>
       <div className="fixed inset-0 z-40 flex items-end sm:items-center justify-center p-0 sm:p-6"
-        style={{ background: 'rgba(8,4,18,0.8)', backdropFilter: 'blur(16px)' }}
+        style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(16px)' }}
         onClick={onClose}>
         <div
           className="animate-modal w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col"
           style={{
-            background: '#0f0a1e',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            boxShadow: '0 20px 60px rgba(0,0,0,.15)',
             maxHeight: '92dvh',
           }}
           onClick={e => e.stopPropagation()}>
 
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 flex-shrink-0"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            style={{ borderBottom: '1px solid var(--border)' }}>
             <span className="font-head font-extrabold text-sm tracking-tight">
               {isEdit ? 'イベントを編集' : 'イベントを追加'}
             </span>
@@ -115,8 +116,8 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                 placeholder="イベント名を入力"
                 className="w-full text-sm rounded-xl px-4 py-3 outline-none transition-colors"
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
                   color: 'var(--text)',
                 }}
               />
@@ -158,7 +159,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                 type="button"
                 onClick={() => setForm(f => ({ ...f, isAllDay: !f.isAllDay, startTime: '', endTime: '' }))}
                 className="relative w-11 h-6 rounded-full transition-colors"
-                style={{ background: form.isAllDay !== false ? 'var(--purple)' : 'rgba(255,255,255,0.15)' }}>
+                style={{ background: form.isAllDay !== false ? 'var(--purple)' : 'rgba(0,0,0,0.12)' }}>
                 <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
                   style={{ transform: form.isAllDay !== false ? 'translateX(20px)' : 'translateX(0)' }} />
               </button>
@@ -171,7 +172,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                 <input type="date" value={form.date}
                   onChange={e => set('date', e.target.value)}
                   className="w-full text-sm rounded-xl px-3 py-3 outline-none"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                 />
               </div>
               <div>
@@ -180,7 +181,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                   min={form.date}
                   onChange={e => set('endDate', e.target.value)}
                   className="w-full text-sm rounded-xl px-3 py-3 outline-none"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                 />
               </div>
             </div>
@@ -193,7 +194,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                   <input type="time" value={form.startTime || ''}
                     onChange={e => set('startTime', e.target.value)}
                     className="w-full text-sm rounded-xl px-3 py-3 outline-none"
-                    style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
                 <div>
@@ -201,7 +202,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                   <input type="time" value={form.endTime || ''}
                     onChange={e => set('endTime', e.target.value)}
                     className="w-full text-sm rounded-xl px-3 py-3 outline-none"
-                    style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
               </div>
@@ -216,8 +217,8 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                     onClick={() => set('repeat', k)}
                     className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
                     style={{
-                      background: form.repeat === k ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.06)',
-                      border: form.repeat === k ? '1px solid rgba(167,139,250,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                      background: form.repeat === k ? 'rgba(124,58,237,0.12)' : 'var(--bg)',
+                      border: form.repeat === k ? '1px solid rgba(124,58,237,0.4)' : '1px solid var(--border)',
                       color: form.repeat === k ? 'var(--purple)' : 'var(--text-2)',
                     }}>
                     {v}
@@ -230,7 +231,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                   <input type="date" value={form.repeatUntil || ''}
                     onChange={e => set('repeatUntil', e.target.value)}
                     className="text-sm rounded-xl px-3 py-2 outline-none"
-                    style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
               )}
@@ -245,8 +246,8 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                     onClick={() => set('assignee', a)}
                     className="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all"
                     style={{
-                      background: form.assignee === a ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.06)',
-                      border: form.assignee === a ? '1px solid rgba(167,139,250,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                      background: form.assignee === a ? 'rgba(124,58,237,0.12)' : 'var(--bg)',
+                      border: form.assignee === a ? '1px solid rgba(124,58,237,0.4)' : '1px solid var(--border)',
                       color: form.assignee === a ? 'var(--purple)' : 'var(--text-2)',
                     }}>
                     {ASSIGNEE_LABELS[a]}
@@ -293,7 +294,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
                 placeholder="メモを入力（任意）"
                 rows={2}
                 className="w-full text-sm rounded-xl px-4 py-3 outline-none resize-none"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
               />
             </div>
 
@@ -306,7 +307,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
 
           {/* Footer */}
           <div className="flex gap-3 px-5 py-4 flex-shrink-0"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            style={{ borderTop: '1px solid var(--border)' }}>
             {isEdit && onDelete && (
               <button onClick={() => { onDelete(); onClose(); }}
                 className="px-4 py-3 rounded-xl text-sm font-bold transition-colors"
@@ -316,7 +317,7 @@ export function EventModal({ initial, userId, onSave, onDelete, onClose }: Props
             )}
             <button onClick={onClose}
               className="flex-1 py-3 rounded-xl text-sm font-bold transition-colors"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-2)' }}>
+              style={{ background: 'var(--surface-hover)', color: 'var(--text-2)', border: '1px solid var(--border)' }}>
               キャンセル
             </button>
             <button
