@@ -3,19 +3,10 @@ import {
   collection, onSnapshot, addDoc, updateDoc, deleteDoc,
   doc, serverTimestamp, orderBy, query,
 } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db } from '../firebase';
 import type { CalendarEvent } from '../types';
 
 const COL = 'st_calendar_events';
-
-async function notifyOtherUser(eventTitle: string, eventDate: string, fromUser: string) {
-  try {
-    const functions = getFunctions(undefined, 'asia-northeast1');
-    const fn = httpsCallable(functions, 'notifyCalendarEvent');
-    await fn({ eventTitle, eventDate, fromUser });
-  } catch { /* non-critical */ }
-}
 
 export function useEvents() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -39,10 +30,11 @@ export function useEvents() {
   const addEvent = async (ev: Omit<CalendarEvent, 'id'>) => {
     try {
       await addDoc(collection(db, COL), { ...ev, createdAt: serverTimestamp() });
-      notifyOtherUser(ev.title, ev.date, ev.createdBy);
+      // notifyOtherUser disabled until Cloud Functions are deployed (avoids CORS errors)
+      // notifyOtherUser(ev.title, ev.date, ev.createdBy);
     } catch (err) {
       console.error('addEvent failed:', err);
-      throw err; // re-throw so EventModal can show error
+      throw err;
     }
   };
 
