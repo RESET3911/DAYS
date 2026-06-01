@@ -11,7 +11,7 @@ export function UserSelect({ onSelect }: Props) {
       <div className="animate-modal w-full max-w-xs text-center p-10 rounded-3xl"
         style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.18)' }}>
         <div className="text-5xl mb-5">📅</div>
-        <h1 className="font-head text-xl font-extrabold mb-2 tracking-tight">ST カレンダー</h1>
+        <h1 className="font-head text-xl font-extrabold mb-2 tracking-tight">DAYS</h1>
         <p className="text-sm mb-8" style={{ color: 'var(--text-2)' }}>どちらのアカウントで使いますか？</p>
         <div className="flex gap-3">
           <button

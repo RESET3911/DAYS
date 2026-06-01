@@ -156,7 +156,7 @@ export function useAlerts(events: CalendarEvent[], settings: AlertSettings = DEF
             title: `準備期限: ${e.title}（7日後）`,
             type: 'anniversary',
             color: '#f472b6',
-            sourceApp: 'ST カレンダー',
+            sourceApp: 'DAYS',
             isAuto: true,
           });
         });

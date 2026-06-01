@@ -69,7 +69,7 @@ async function writeNotification(params: {
     title:     params.title,
     body:      params.body,
     isRead:    false,
-    linkedUrl: 'https://RESET3911.github.io/ST_CALENDAR/',
+    linkedUrl: 'https://RESET3911.github.io/DAYS/',
     linkedId:  params.linkedId || null,
     createdAt: Timestamp.now(),
   });

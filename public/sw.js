@@ -1,8 +1,8 @@
 // sw.js — Service Worker (App Shell cache)
-const CACHE_NAME = 'st-calendar-v1';
+const CACHE_NAME = 'days-v1';
 const PRECACHE = [
-  '/ST_CALENDAR/',
-  '/ST_CALENDAR/index.html',
+  '/DAYS/',
+  '/DAYS/index.html',
 ];
 
 self.addEventListener('install', e => {

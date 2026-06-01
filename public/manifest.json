@@ -1,21 +1,21 @@
 {
-  "name": "ST カレンダー",
-  "short_name": "ST Cal",
+  "name": "DAYS",
+  "short_name": "DAYS",
   "description": "さく & たかはしの共有生活カレンダー",
-  "start_url": "/ST_CALENDAR/",
+  "start_url": "/DAYS/",
   "display": "standalone",
   "background_color": "#080412",
   "theme_color": "#7c3aed",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/ST_CALENDAR/icons/icon-192.png",
+      "src": "/DAYS/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/ST_CALENDAR/icons/icon-512.png",
+      "src": "/DAYS/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
