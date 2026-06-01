@@ -47,7 +47,9 @@ export interface AlertEvent {
   isAuto: true;
 }
 
-export type ViewMode = 'today' | 'month' | 'week';
+export type BottomTab = 'calendar' | 'todo' | 'stamp' | 'settings';
+export type CalendarSubView = 'today' | 'month' | 'week';
+export type ViewMode = CalendarSubView; // kept for compatibility
 
 export interface Todo {
   id: string;

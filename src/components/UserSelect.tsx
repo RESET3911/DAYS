@@ -19,14 +19,14 @@ export function UserSelect({ onSelect }: Props) {
           <button
             onClick={() => onSelect('saku')}
             className="flex-1 py-4 rounded-2xl font-head font-bold text-sm text-white transition-transform active:scale-95"
-            style={{ background: 'linear-gradient(135deg,#be185d,#e11d48)', boxShadow: '0 4px 20px rgba(225,29,72,0.3)' }}>
-            🌸 さく
+            style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', boxShadow: '0 4px 20px rgba(124,58,237,0.3)' }}>
+            👦 けんしん
           </button>
           <button
             onClick={() => onSelect('takahashi')}
             className="flex-1 py-4 rounded-2xl font-head font-bold text-sm text-white transition-transform active:scale-95"
-            style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', boxShadow: '0 4px 20px rgba(124,58,237,0.3)' }}>
-            🔷 たかはし
+            style={{ background: 'linear-gradient(135deg,#be185d,#e11d48)', boxShadow: '0 4px 20px rgba(225,29,72,0.3)' }}>
+            🌸 れなちゃん
           </button>
         </div>
       </div>

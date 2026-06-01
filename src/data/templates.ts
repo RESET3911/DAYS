@@ -100,8 +100,8 @@ export const EVENT_COLORS: { label: string; value: string; bg: string }[] = [
 export const DEFAULT_COLOR = EVENT_COLORS[0].value;
 
 export const ASSIGNEE_LABELS: Record<string, string> = {
-  saku:      'さく',
-  takahashi: 'たかはし',
+  saku:      'けんしん',
+  takahashi: 'れなちゃん',
   both:      '2人',
 };
 
