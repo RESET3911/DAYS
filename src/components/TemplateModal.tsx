@@ -23,8 +23,8 @@ export function TemplateModal({ customTemplates = [], onSelect, onClose }: Props
   const all: Template[] = [...TEMPLATES, ...customTemplates.map(customToTemplate)];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
-      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(8px)' }}
+    <div className="fixed inset-0 flex items-end sm:items-center justify-center p-4 sm:p-6"
+      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(8px)', zIndex: 120 }}
       onClick={onClose}>
       <div className="animate-modal w-full max-w-sm rounded-3xl overflow-hidden shadow-xl"
         style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}

@@ -47,11 +47,11 @@ export function StampRow({ stamps, notes, onAdd, onRemove, onSetNote }: Props) {
 
       {/* Editor popover */}
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center"
-          style={{ background: 'rgba(0,0,0,.3)' }}
+        <div className="fixed inset-0 flex items-end justify-center"
+          style={{ background: 'rgba(0,0,0,.3)', zIndex: 110 }}
           onClick={close}>
-          <div className="w-full max-w-md rounded-t-3xl p-4 pb-8 animate-modal"
-            style={{ background: 'var(--surface)' }}
+          <div className="w-full max-w-md rounded-t-3xl p-4 animate-modal"
+            style={{ background: 'var(--surface)', paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-3">
               <span style={{ fontSize: 32 }}>{editing}</span>

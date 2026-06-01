@@ -57,8 +57,8 @@ export function AnniversaryModal({ anniversaries, userId, onAdd, onDelete, onClo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6"
-      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(16px)' }}
+    <div className="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6"
+      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(16px)', zIndex: 110 }}
       onClick={onClose}>
       <div className="animate-modal w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col"
         style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 20px 60px rgba(0,0,0,.15)', maxHeight: '90dvh' }}

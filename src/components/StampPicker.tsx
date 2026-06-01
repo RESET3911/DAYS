@@ -47,11 +47,11 @@ export function StampPicker({ selected, customStamps = [], onToggle, onAddCustom
   const customItems = customStamps.map(emoji => ({ emoji, label: 'カスタム' }));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(6px)' }}
+    <div className="fixed inset-0 flex items-end justify-center"
+      style={{ background: 'rgba(0,0,0,.35)', backdropFilter: 'blur(6px)', zIndex: 110 }}
       onClick={onClose}>
-      <div className="w-full max-w-xl rounded-t-3xl p-4 pb-8 animate-modal shadow-2xl"
-        style={{ background: 'var(--surface)', maxHeight: '80dvh', overflowY: 'auto' }}
+      <div className="w-full max-w-xl rounded-t-3xl p-4 animate-modal shadow-2xl"
+        style={{ background: 'var(--surface)', maxHeight: '80dvh', overflowY: 'auto', paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}
         onClick={e => e.stopPropagation()}>
 
         <div className="flex justify-between items-center mb-3 px-1">

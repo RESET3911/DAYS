@@ -14,8 +14,8 @@ interface Props { alert: AlertEvent; onClose: () => void; }
 
 export function AlertDetail({ alert, onClose }: Props) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
-      style={{ background: 'rgba(0,0,0,.4)', backdropFilter: 'blur(8px)' }}
+    <div className="fixed inset-0 flex items-end sm:items-center justify-center p-4 sm:p-6"
+      style={{ background: 'rgba(0,0,0,.4)', backdropFilter: 'blur(8px)', zIndex: 110 }}
       onClick={onClose}>
       <div className="animate-modal w-full max-w-xs rounded-3xl p-5 shadow-xl"
         style={{ background: 'var(--surface)', border: `1px solid ${alert.color}33` }}

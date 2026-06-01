@@ -305,7 +305,7 @@ export default function App() {
         {bottomTab === 'calendar' && calSubView === 'month' && (
           <div className="flex flex-col h-full min-h-0">
             {/* Scrollable area: banner + grid + day panel */}
-            <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 120 }}
+            <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom))' }}
               onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
               onTouchEnd={e => { const dx = e.changedTouches[0].clientX - touchX.current; if (Math.abs(dx) > 80) navigate(dx < 0 ? 1 : -1); }}>
               <AnniversaryCountdown anniversaries={anniversaries} userId={userId!} onAdd={addAnniversary} onDelete={deleteAnniversary} />

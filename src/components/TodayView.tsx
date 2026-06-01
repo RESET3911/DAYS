@@ -77,7 +77,8 @@ export function TodayView({
   );
 
   return (
-    <div className="flex-1 overflow-y-auto px-3 pt-3 pb-24 flex flex-col gap-3">
+    <div className="flex-1 overflow-y-auto px-3 pt-3 flex flex-col gap-3"
+      style={{ paddingBottom: 'calc(96px + env(safe-area-inset-bottom))' }}>
 
       {/* Date header */}
       <div className="pt-1 pb-2 px-1">

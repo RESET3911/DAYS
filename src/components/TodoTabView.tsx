@@ -46,7 +46,8 @@ export function TodoTabView({ todosByDate, onAdd, onToggle, onDelete }: Props) {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto pb-24 px-4 pt-3 flex flex-col gap-4">
+    <div className="flex-1 overflow-y-auto px-4 pt-3 flex flex-col gap-4"
+      style={{ paddingBottom: 'calc(96px + env(safe-area-inset-bottom))' }}>
 
       {/* Add today's todo */}
       <div className="rounded-2xl p-4" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>

@@ -82,8 +82,8 @@ export function EventModal({ initial, userId, customTemplates = [], onSave, onDe
 
   return (
     <>
-      <div className="fixed inset-0 z-40 flex items-end sm:items-center justify-center p-0 sm:p-6"
-        style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(16px)' }}
+      <div className="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6"
+        style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(16px)', zIndex: 100 }}
         onClick={onClose}>
         <div
           className="animate-modal w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col"
