@@ -1,0 +1,9 @@
+node_modules/
+dist/
+functions/lib/
+functions/node_modules/
+.env
+.env.local
+*.local
+js/
+css/style.css

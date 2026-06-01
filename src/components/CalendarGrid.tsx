@@ -1,0 +1,201 @@
+import { useState } from 'react';
+import type { CalendarEvent, AlertEvent } from '../types';
+import type { Anniversary } from '../hooks/useAnniversaries';
+import { nextOccurrence } from '../hooks/useAnniversaries';
+import { AlertDetail } from './AlertDetail';
+import { isHoliday } from '../data/holidays';
+
+const WDS = ['日', '月', '火', '水', '木', '金', '土'];
+
+interface Props {
+  year: number;
+  month: number; // 0-indexed
+  events: CalendarEvent[];
+  alerts: AlertEvent[];
+  anniversaries: Anniversary[];
+  showAlertsOnly: boolean;
+  selectedDate?: string;
+  onDayClick: (date: string) => void;
+  onEventClick: (ev: CalendarEvent) => void;
+}
+
+function datesInRange(start: string, end: string): string[] {
+  const dates: string[] = [];
+  const s = new Date(start + 'T00:00:00');
+  const e = new Date((end || start) + 'T00:00:00');
+  const cur = new Date(s);
+  while (cur <= e) {
+    dates.push(cur.toISOString().split('T')[0]);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return dates;
+}
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+export function CalendarGrid({
+  year, month, events, alerts, anniversaries, showAlertsOnly, selectedDate, onDayClick, onEventClick,
+}: Props) {
+  const [selectedAlert, setSelectedAlert] = useState<AlertEvent | null>(null);
+
+  const today    = new Date().toISOString().split('T')[0];
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDay  = new Date(year, month + 1, 0).getDate();
+
+  // Build grid
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= lastDay; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const ds = (d: number) => `${year}-${pad2(month + 1)}-${pad2(d)}`;
+
+  // Events per day
+  const eventsOnDay: Record<string, CalendarEvent[]> = {};
+  events.forEach(ev => {
+    datesInRange(ev.date, ev.endDate || ev.date).forEach(d => {
+      (eventsOnDay[d] ||= []).push(ev);
+    });
+  });
+
+  // Alerts per day
+  const alertsOnDay: Record<string, AlertEvent[]> = {};
+  alerts.forEach(a => { (alertsOnDay[a.date] ||= []).push(a); });
+
+  // Anniversaries per day in this month
+  const annOnDay: Record<string, { ann: Anniversary; yearsElapsed: number | null }> = {};
+  anniversaries.forEach(ann => {
+    const dateStr = `${year}-${pad2(ann.month)}-${pad2(ann.day)}`;
+    if (dateStr.startsWith(`${year}-${pad2(month + 1)}`)) {
+      const { yearsElapsed } = nextOccurrence(ann);
+      annOnDay[dateStr] = { ann, yearsElapsed };
+    }
+  });
+
+  return (
+    <>
+      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+        {/* Weekday headers */}
+        <div className="grid grid-cols-7">
+          {WDS.map((w, i) => (
+            <div key={w} className="text-center py-2 text-xs font-bold uppercase tracking-wider"
+              style={{ color: i === 0 ? 'var(--rose)' : i === 6 ? '#60a5fa' : 'var(--text-3)' }}>
+              {w}
+            </div>
+          ))}
+        </div>
+
+        {/* Day cells */}
+        <div className="grid grid-cols-7" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          {cells.map((day, idx) => {
+            if (!day) return (
+              <div key={`empty_${idx}`} className="min-h-16"
+                style={{ borderTop: '1px solid rgba(255,255,255,.04)', background: 'rgba(0,0,0,.15)' }} />
+            );
+
+            const dateStr   = ds(day);
+            const dayEvents = eventsOnDay[dateStr] || [];
+            const dayAlerts = alertsOnDay[dateStr] || [];
+            const annEntry  = annOnDay[dateStr];
+            const holiday   = isHoliday(dateStr);
+
+            const isToday    = dateStr === today;
+            const isSelected = selectedDate === dateStr;
+            const isSun      = idx % 7 === 0;
+            const isSat      = idx % 7 === 6;
+            const isHol      = !!holiday;
+
+            const visibleEvents = showAlertsOnly ? [] : dayEvents.slice(0, 2);
+            const visibleAlerts = dayAlerts.slice(0, showAlertsOnly ? 3 : 1);
+            const overflow =
+              (showAlertsOnly ? 0 : Math.max(0, dayEvents.length - 2)) +
+              Math.max(0, dayAlerts.length - (showAlertsOnly ? 3 : 1));
+
+            // Day number text color
+            const numColor = isToday ? '#fff'
+              : isSun || isHol ? 'var(--rose)'
+              : isSat           ? '#60a5fa'
+              : 'var(--text-2)';
+
+            return (
+              <div
+                key={dateStr}
+                onClick={() => onDayClick(dateStr)}
+                className="min-h-16 p-1 cursor-pointer"
+                style={{
+                  borderTop: '1px solid rgba(255,255,255,.04)',
+                  background: isToday    ? 'rgba(167,139,250,.08)'
+                            : isSelected ? 'rgba(167,139,250,.04)'
+                            : undefined,
+                  outline: isSelected && !isToday ? '1px solid rgba(167,139,250,.3)' : undefined,
+                  outlineOffset: '-1px',
+                }}>
+
+                {/* Day number */}
+                <div className="flex justify-center mb-0.5">
+                  <span className="text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full"
+                    style={{ background: isToday ? 'var(--purple)' : 'transparent', color: numColor }}>
+                    {day}
+                  </span>
+                </div>
+
+                {/* Holiday label */}
+                {holiday && (
+                  <div className="truncate mb-0.5" style={{ fontSize: '9px', color: 'var(--rose)', opacity: 0.7 }}>
+                    {holiday}
+                  </div>
+                )}
+
+                {/* Anniversary */}
+                {annEntry && (
+                  <div className="truncate mb-0.5 flex items-center gap-0.5"
+                    style={{ fontSize: '9px', color: annEntry.ann.color }}>
+                    {annEntry.ann.type === 'birthday' ? '🎂' : '🎉'}
+                    {annEntry.yearsElapsed != null ? `${annEntry.yearsElapsed}周年` : annEntry.ann.title.slice(0, 5)}
+                  </div>
+                )}
+
+                {/* Events */}
+                {visibleEvents.map(ev => (
+                  <div key={ev.id}
+                    onClick={e => { e.stopPropagation(); onEventClick(ev); }}
+                    className="truncate font-medium cursor-pointer mb-0.5 rounded-md px-1.5 py-0.5"
+                    style={{
+                      background: `${ev.color || '#a78bfa'}22`,
+                      color: ev.color || '#a78bfa',
+                      fontSize: '10px',
+                    }}>
+                    {ev.isAllDay === false && ev.startTime
+                      ? `${ev.startTime.slice(0, 5)} ${ev.title}`
+                      : ev.title}
+                  </div>
+                ))}
+
+                {/* Alerts */}
+                {visibleAlerts.map(a => (
+                  <div key={a.id}
+                    onClick={e => { e.stopPropagation(); setSelectedAlert(a); }}
+                    className="truncate font-medium cursor-pointer mb-0.5 rounded-md px-1.5 py-0.5 flex items-center gap-0.5"
+                    style={{ background: `${a.color}18`, color: a.color, fontSize: '10px' }}>
+                    <span style={{ fontSize: '8px' }}>⚠</span>
+                    <span className="truncate">{a.title.split(':')[0]}</span>
+                  </div>
+                ))}
+
+                {overflow > 0 && (
+                  <div className="text-center" style={{ color: 'var(--text-3)', fontSize: '9px' }}>
+                    +{overflow}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {selectedAlert && (
+        <AlertDetail alert={selectedAlert} onClose={() => setSelectedAlert(null)} />
+      )}
+    </>
+  );
+}
