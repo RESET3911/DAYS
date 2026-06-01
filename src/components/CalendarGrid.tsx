@@ -21,13 +21,15 @@ interface Props {
   onStampDrop?: (date: string, stamp: string) => void;
 }
 
+const localDateStr = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 function datesInRange(start: string, end: string): string[] {
   const dates: string[] = [];
-  const s = new Date(start + 'T00:00:00');
-  const e = new Date((end || start) + 'T00:00:00');
-  const cur = new Date(s);
+  const cur = new Date(start + 'T00:00:00');
+  const e   = new Date((end || start) + 'T00:00:00');
   while (cur <= e) {
-    dates.push(cur.toISOString().split('T')[0]);
+    dates.push(localDateStr(cur)); // local, not UTC — avoids JST day-shift
     cur.setDate(cur.getDate() + 1);
   }
   return dates;
