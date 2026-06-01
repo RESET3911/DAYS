@@ -71,3 +71,11 @@ body {
   from { transform: translate(0,0) scale(1); }
   to   { transform: translate(30px,20px) scale(1.08); }
 }
+
+/* Stamp drag-over highlight */
+[data-drag-over="true"],
+.cal-drop-cell:is([data-drag-over="true"]) {
+  background: rgba(124,58,237,.14) !important;
+  outline: 2px dashed rgba(124,58,237,.5) !important;
+  outline-offset: -2px;
+}

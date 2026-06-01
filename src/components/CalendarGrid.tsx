@@ -18,6 +18,7 @@ interface Props {
   selectedDate?: string;
   onDayClick: (date: string) => void;
   onEventClick: (ev: CalendarEvent) => void;
+  onStampDrop?: (date: string, stamp: string) => void;
 }
 
 function datesInRange(start: string, end: string): string[] {
@@ -35,7 +36,7 @@ function datesInRange(start: string, end: string): string[] {
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
 export function CalendarGrid({
-  year, month, events, alerts, anniversaries, stampsByDate, showAlertsOnly, selectedDate, onDayClick, onEventClick,
+  year, month, events, alerts, anniversaries, stampsByDate, showAlertsOnly, selectedDate, onDayClick, onEventClick, onStampDrop,
 }: Props) {
   const [selectedAlert, setSelectedAlert] = useState<AlertEvent | null>(null);
 
@@ -122,8 +123,15 @@ export function CalendarGrid({
             return (
               <div
                 key={dateStr}
+                data-date={dateStr}
                 onClick={() => onDayClick(dateStr)}
-                className="min-h-16 p-1 cursor-pointer"
+                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const stamp = e.dataTransfer.getData('stamp');
+                  if (stamp && onStampDrop) onStampDrop(dateStr, stamp);
+                }}
+                className="min-h-16 p-1 cursor-pointer cal-drop-cell"
                 style={{
                   borderTop: '1px solid var(--border)',
                   background: isToday    ? 'rgba(124,58,237,.07)'

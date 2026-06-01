@@ -18,6 +18,7 @@ import { TodoTabView }        from './components/TodoTabView';
 import { StampTabView }       from './components/StampTabView';
 import { SettingsView }       from './components/SettingsView';
 import { AnniversaryCountdown } from './components/AnniversaryCountdown';
+import { StampShelf }           from './components/StampShelf';
 import type { CalendarEvent, BottomTab, CalendarSubView } from './types';
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
@@ -302,8 +303,11 @@ export default function App() {
               <CalendarGrid year={year} month={month} events={filteredEvents} alerts={alerts}
                 anniversaries={anniversaries} stampsByDate={stampsByDate}
                 showAlertsOnly={showAlertsOnly} selectedDate={selectedDate}
-                onDayClick={setSelectedDate} onEventClick={openEdit} />
+                onDayClick={setSelectedDate} onEventClick={openEdit}
+                onStampDrop={(date, stamp) => toggleStamp(date, stamp)} />
             </div>
+            {/* Stamp shelf — drag stamps onto calendar cells */}
+            <StampShelf onDrop={(date, stamp) => toggleStamp(date, stamp)} />
             <DayPanel selectedDate={selectedDate} events={filteredEvents} alerts={alerts}
               stamps={stampsByDate[selectedDate] || []}
               todos={todosByDate[selectedDate] || []}
