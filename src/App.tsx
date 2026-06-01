@@ -1,14 +1,18 @@
 import { useState, useMemo, useRef } from 'react';
-import { useUser }          from './hooks/useUser';
-import { useEvents }        from './hooks/useEvents';
+import { useUser }           from './hooks/useUser';
+import { useEvents }         from './hooks/useEvents';
 import { useAlerts, DEFAULT_ALERT_SETTINGS } from './hooks/useAlerts';
-import type { AlertSettings }               from './hooks/useAlerts';
-import { useAnniversaries } from './hooks/useAnniversaries';
-import { UserSelect }        from './components/UserSelect';
-import { CalendarGrid }      from './components/CalendarGrid';
-import { EventModal }        from './components/EventModal';
-import { DayPanel }          from './components/DayPanel';
-import { WeekView }          from './components/WeekView';
+import type { AlertSettings }                from './hooks/useAlerts';
+import { useAnniversaries }  from './hooks/useAnniversaries';
+import { useTodos }          from './hooks/useTodos';
+import { useNotes }          from './hooks/useNotes';
+import { useStamps }         from './hooks/useStamps';
+import { UserSelect }         from './components/UserSelect';
+import { CalendarGrid }       from './components/CalendarGrid';
+import { EventModal }         from './components/EventModal';
+import { DayPanel }           from './components/DayPanel';
+import { WeekView }           from './components/WeekView';
+import { TodayView }          from './components/TodayView';
 import { AnniversaryCountdown } from './components/AnniversaryCountdown';
 import type { CalendarEvent, ViewMode } from './types';
 
@@ -90,6 +94,9 @@ export default function App() {
   const { userId, selectUser, clearUser }                  = useUser();
   const { events, loading, addEvent, updateEvent, deleteEvent } = useEvents();
   const { anniversaries, addAnniversary, deleteAnniversary }   = useAnniversaries();
+  const { todosByDate, addTodo, toggleTodo, deleteTodo }        = useTodos(userId);
+  const { notesByDate, saveNote }                               = useNotes(userId);
+  const { stampsByDate, toggleStamp }                           = useStamps(userId);
   const [alertSettings] = useState<AlertSettings>(DEFAULT_ALERT_SETTINGS);
   const alerts = useAlerts(events, alertSettings);
 
@@ -266,7 +273,7 @@ export default function App() {
 
         {/* View tabs */}
         <div className="flex gap-1">
-          {(['month', 'week'] as ViewMode[]).map(m => (
+          {([['today','今日'], ['month','月'], ['week','週']] as [ViewMode,string][]).map(([m, label]) => (
             <button key={m}
               onClick={() => {
                 setViewMode(m);
@@ -274,11 +281,11 @@ export default function App() {
               }}
               className="px-3 py-1.5 rounded-full text-xs font-bold transition-all"
               style={{
-                background: viewMode === m ? 'rgba(167,139,250,.2)' : 'transparent',
+                background: viewMode === m ? 'rgba(124,58,237,.15)' : 'transparent',
                 color: viewMode === m ? 'var(--purple)' : 'var(--text-3)',
-                border: viewMode === m ? '1px solid rgba(167,139,250,.3)' : '1px solid transparent',
+                border: viewMode === m ? '1px solid rgba(124,58,237,.3)' : '1px solid transparent',
               }}>
-              {m === 'month' ? '月' : '週'}
+              {label}
             </button>
           ))}
         </div>
@@ -314,12 +321,27 @@ export default function App() {
       <main className="flex-1 min-h-0 relative z-10 flex flex-col">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center z-20"
-            style={{ background: 'rgba(8,4,18,.5)' }}>
+            style={{ background: 'rgba(245,244,250,.7)' }}>
             <div className="skel w-32 h-4 rounded-full" />
           </div>
         )}
 
-        {viewMode === 'month' ? (
+        {viewMode === 'today' ? (
+          <TodayView
+            events={filteredEvents}
+            alerts={alerts}
+            stamps={stampsByDate[fmtD(new Date())] || []}
+            todos={todosByDate[fmtD(new Date())] || []}
+            noteContent={notesByDate[fmtD(new Date())] || ''}
+            onToggleStamp={s => toggleStamp(fmtD(new Date()), s)}
+            onAddTodo={title => addTodo(fmtD(new Date()), title)}
+            onToggleTodo={toggleTodo}
+            onDeleteTodo={deleteTodo}
+            onSaveNote={saveNote}
+            onEventClick={openEdit}
+            onAddEvent={() => openNew(fmtD(new Date()))}
+          />
+        ) : viewMode === 'month' ? (
           <div className="flex flex-col h-full min-h-0"
             onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
             onTouchEnd={e => {
@@ -340,6 +362,7 @@ export default function App() {
                 events={filteredEvents}
                 alerts={alerts}
                 anniversaries={anniversaries}
+                stampsByDate={stampsByDate}
                 showAlertsOnly={showAlertsOnly}
                 selectedDate={selectedDate}
                 onDayClick={setSelectedDate}
@@ -350,7 +373,15 @@ export default function App() {
               selectedDate={selectedDate}
               events={filteredEvents}
               alerts={alerts}
+              stamps={stampsByDate[selectedDate] || []}
+              todos={todosByDate[selectedDate] || []}
+              noteContent={notesByDate[selectedDate] || ''}
               showAlertsOnly={showAlertsOnly}
+              onToggleStamp={s => toggleStamp(selectedDate, s)}
+              onAddTodo={title => addTodo(selectedDate, title)}
+              onToggleTodo={toggleTodo}
+              onDeleteTodo={deleteTodo}
+              onSaveNote={saveNote}
               onEventClick={openEdit}
               onAddClick={openNew}
             />

@@ -47,4 +47,20 @@ export interface AlertEvent {
   isAuto: true;
 }
 
-export type ViewMode = 'month' | 'week';
+export type ViewMode = 'today' | 'month' | 'week';
+
+export interface Todo {
+  id: string;
+  date: string;
+  userId: string;
+  title: string;
+  done: boolean;
+  createdAt?: unknown;
+}
+
+export interface DayStamps {
+  date: string;
+  userId: string;
+  stamps: string[];
+}
+

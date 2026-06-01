@@ -13,6 +13,7 @@ interface Props {
   events: CalendarEvent[];
   alerts: AlertEvent[];
   anniversaries: Anniversary[];
+  stampsByDate: Record<string, string[]>;
   showAlertsOnly: boolean;
   selectedDate?: string;
   onDayClick: (date: string) => void;
@@ -34,7 +35,7 @@ function datesInRange(start: string, end: string): string[] {
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
 export function CalendarGrid({
-  year, month, events, alerts, anniversaries, showAlertsOnly, selectedDate, onDayClick, onEventClick,
+  year, month, events, alerts, anniversaries, stampsByDate, showAlertsOnly, selectedDate, onDayClick, onEventClick,
 }: Props) {
   const [selectedAlert, setSelectedAlert] = useState<AlertEvent | null>(null);
 
@@ -98,6 +99,7 @@ export function CalendarGrid({
             const dayAlerts = alertsOnDay[dateStr] || [];
             const annEntry  = annOnDay[dateStr];
             const holiday   = isHoliday(dateStr);
+            const dayStamps = stampsByDate[dateStr] || [];
 
             const isToday    = dateStr === today;
             const isSelected = selectedDate === dateStr;
@@ -185,6 +187,18 @@ export function CalendarGrid({
                 {overflow > 0 && (
                   <div className="text-center" style={{ color: 'var(--text-3)', fontSize: '9px' }}>
                     +{overflow}
+                  </div>
+                )}
+
+                {/* Stamps */}
+                {dayStamps.length > 0 && (
+                  <div className="flex flex-wrap gap-px mt-0.5">
+                    {dayStamps.slice(0, 3).map(s => (
+                      <span key={s} style={{ fontSize: 10, lineHeight: 1 }}>{s}</span>
+                    ))}
+                    {dayStamps.length > 3 && (
+                      <span style={{ fontSize: 8, color: 'var(--text-3)' }}>+{dayStamps.length - 3}</span>
+                    )}
                   </div>
                 )}
               </div>
