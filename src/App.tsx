@@ -8,6 +8,7 @@ import { useTodos }          from './hooks/useTodos';
 import { useNotes }          from './hooks/useNotes';
 import { useStamps }         from './hooks/useStamps';
 import { useSettings }       from './hooks/useSettings';
+import { useNotifications }  from './hooks/useNotifications';
 import { STAMPS }            from './components/StampPicker';
 import { UserSelect }         from './components/UserSelect';
 import { CalendarGrid }       from './components/CalendarGrid';
@@ -21,6 +22,7 @@ import { StampTabView }       from './components/StampTabView';
 import { SettingsView }       from './components/SettingsView';
 import { AnniversaryCountdown } from './components/AnniversaryCountdown';
 import { StampShelf }           from './components/StampShelf';
+import { NotificationCenter }     from './components/NotificationCenter';
 import type { CalendarEvent, BottomTab, CalendarSubView } from './types';
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
@@ -79,6 +81,7 @@ export default function App() {
   const { notesByDate, saveNote }                               = useNotes(userId);
   const { stampsByDate, stampDayByDate, addStamp, removeStamp, toggleStamp, setStampNote } = useStamps(userId);
   const { customStamps, addCustomStamp, removeCustomStamp, customTemplates, addCustomTemplate, removeCustomTemplate } = useSettings();
+  const { notifications, unreadCount, markRead, markAllRead, remove: removeNotification } = useNotifications(userId);
   const [alertSettings, setAlertSettings] = useState<AlertSettings>(DEFAULT_ALERT_SETTINGS);
   const alerts = useAlerts(events, alertSettings);
 
@@ -152,7 +155,7 @@ export default function App() {
           : `${weekStart.getMonth() + 1}/${weekStart.getDate()} 〜 ${we.getMonth() + 1}/${we.getDate()}`;
       })();
 
-  const userLabel = userId === 'saku' ? '👦' : '🌸';
+  const userLabel = userId === 'kenshin' ? '👦' : '🌸';
 
   // ── Modal ────────────────────────────────────────────────────────────────────
 
@@ -207,6 +210,14 @@ export default function App() {
           style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
           {userLabel}
         </button>
+
+        <NotificationCenter
+          notifications={notifications}
+          unreadCount={unreadCount}
+          onMarkRead={markRead}
+          onMarkAllRead={markAllRead}
+          onRemove={removeNotification}
+        />
 
         {bottomTab === 'calendar' && calSubView !== 'today' && (
           <button onClick={() => navigate(-1)}

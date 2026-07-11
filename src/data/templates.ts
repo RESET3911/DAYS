@@ -101,8 +101,8 @@ export const EVENT_COLORS: { label: string; value: string; bg: string }[] = [
 export const DEFAULT_COLOR = EVENT_COLORS[0].value;
 
 export const ASSIGNEE_LABELS: Record<string, string> = {
-  saku:      'けんしん',
-  takahashi: 'れなちゃん',
+  kenshin: 'けんしん',
+  rena:    'れなちゃん',
   both:      '2人',
 };
 
@@ -116,6 +116,6 @@ export function buildSubTasksFromTemplate(
     done: false,
     linkedApp: t.linkedApp ?? null,
     linkedCategory: t.linkedCategory ?? undefined,
-    assignee: (createdBy === 'saku' ? 'saku' : 'takahashi') as Assignee,
+    assignee: (createdBy === 'kenshin' ? 'kenshin' : 'rena') as Assignee,
   }));
 }

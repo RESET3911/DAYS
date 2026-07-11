@@ -42,7 +42,7 @@ export function CalendarGrid({
 }: Props) {
   const [selectedAlert, setSelectedAlert] = useState<AlertEvent | null>(null);
 
-  const today    = new Date().toISOString().split('T')[0];
+  const today    = localDateStr(new Date());
   const firstDay = new Date(year, month, 1).getDay();
   const lastDay  = new Date(year, month + 1, 0).getDate();
 

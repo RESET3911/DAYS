@@ -73,8 +73,8 @@ export function SubtaskList({ tasks, onChange }: Props) {
                     onChange={e => update(task.id, { assignee: e.target.value as Assignee })}
                     style={inputStyle}>
                     <option value="both">2人</option>
-                    <option value="saku">さく</option>
-                    <option value="takahashi">たかはし</option>
+                    <option value="kenshin">けんしん</option>
+                    <option value="rena">れなちゃん</option>
                   </select>
                   <input type="date" value={task.dueDate || ''}
                     onChange={e => update(task.id, { dueDate: e.target.value || undefined })}

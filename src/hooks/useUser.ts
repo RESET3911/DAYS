@@ -1,23 +1,21 @@
 import { useState } from 'react';
 import type { UserId } from '../types';
+import { loadUser, saveUser, clearUser } from '../shared/users';
 
-const STORAGE_KEY = 'stcal_user';
+const LEGACY = { key: 'stcal_user', map: { saku: 'kenshin', takahashi: 'rena' } as Record<string, UserId> };
 
 export function useUser() {
-  const [userId, setUserId] = useState<UserId | null>(() => {
-    const v = localStorage.getItem(STORAGE_KEY);
-    return v === 'saku' || v === 'takahashi' ? v : null;
-  });
+  const [userId, setUserId] = useState<UserId | null>(() => loadUser(LEGACY));
 
   const selectUser = (id: UserId) => {
-    localStorage.setItem(STORAGE_KEY, id);
+    saveUser(id);
     setUserId(id);
   };
 
-  const clearUser = () => {
-    localStorage.removeItem(STORAGE_KEY);
+  const clearUserSelection = () => {
+    clearUser();
     setUserId(null);
   };
 
-  return { userId, selectUser, clearUser };
+  return { userId, selectUser, clearUser: clearUserSelection };
 }

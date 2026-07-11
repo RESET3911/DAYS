@@ -3,7 +3,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { AlertEvent, CalendarEvent } from '../types';
 
-const fmt = (d: Date) => d.toISOString().split('T')[0];
+import { localDateStr } from '../shared/date';
+
+const fmt = localDateStr;
 const addDays = (date: string, n: number) => {
   const d = new Date(date + 'T00:00:00');
   d.setDate(d.getDate() + n);
@@ -123,7 +125,7 @@ export function useAlerts(events: CalendarEvent[], settings: AlertSettings = DEF
 
       // Gantt task deadline alerts
       if (settings.gantt) try {
-        const snap = await getDocs(collection(db, 'tasks'));
+        const snap = await getDocs(collection(db, 'gantt_tasks'));
         const now = new Date();
         snap.docs.forEach(d => {
           const data = d.data();

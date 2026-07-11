@@ -4,6 +4,7 @@ import {
   doc, serverTimestamp, orderBy, query,
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { notifyEventAdded } from '../utils/notify';
 import type { CalendarEvent } from '../types';
 
 const COL = 'st_calendar_events';
@@ -30,8 +31,8 @@ export function useEvents() {
   const addEvent = async (ev: Omit<CalendarEvent, 'id'>) => {
     try {
       await addDoc(collection(db, COL), { ...ev, createdAt: serverTimestamp() });
-      // notifyOtherUser disabled until Cloud Functions are deployed (avoids CORS errors)
-      // notifyOtherUser(ev.title, ev.date, ev.createdBy);
+      // 相手へ即時通知（通知センター書き込み + ntfy push）。失敗してもイベント追加は成功扱い。
+      notifyEventAdded(ev, ev.createdBy).catch(err => console.error('notifyEventAdded failed:', err));
     } catch (err) {
       console.error('addEvent failed:', err);
       throw err;

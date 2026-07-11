@@ -1,4 +1,5 @@
-export type UserId = 'saku' | 'takahashi';
+export type { UserId } from './shared/users';
+import type { UserId } from './shared/users';
 export type Assignee = UserId | 'both';
 export type LinkedApp = 'RINGI' | 'WISHLIST' | 'CASHFLOW' | null;
 export type TemplateType = '旅行' | '引っ越し' | '記念日' | '高額購入' | '確定申告';

@@ -1,3 +1,4 @@
+import { localDateStr } from '../shared/date';
 import { useState, useEffect } from 'react';
 import type { CalendarEvent, UserId, Assignee, SubTask, RepeatType } from '../types';
 import { TemplateModal } from './TemplateModal';
@@ -39,7 +40,7 @@ const emptyEvent = (date: string, userId: UserId, startTime?: string): Omit<Cale
 
 export function EventModal({ initial, userId, customTemplates = [], onSave, onDelete, onClose }: Props) {
   const [showTemplates, setShowTemplates] = useState(false);
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr();
   const [form, setForm] = useState<Omit<CalendarEvent, 'id'> & { id?: string }>(
     () => ({ ...emptyEvent(initial?.date || today, userId, initial?.startTime), ...initial })
   );
@@ -64,7 +65,7 @@ export function EventModal({ initial, userId, customTemplates = [], onSave, onDe
       templateType: t.type,
       subTasks: tasks,
       cashflowCategory: t.cashflowCategory,
-      endDate: endDate.toISOString().split('T')[0],
+      endDate: localDateStr(endDate),
     }));
   };
 
@@ -242,7 +243,7 @@ export function EventModal({ initial, userId, customTemplates = [], onSave, onDe
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--text-3)' }}>担当</label>
               <div className="flex gap-2">
-                {(['both', 'saku', 'takahashi'] as Assignee[]).map(a => (
+                {(['both', 'kenshin', 'rena'] as Assignee[]).map(a => (
                   <button key={a}
                     onClick={() => set('assignee', a)}
                     className="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all"

@@ -17,13 +17,13 @@ export function UserSelect({ onSelect }: Props) {
         <p className="text-sm mb-8" style={{ color: 'var(--text-2)' }}>どちらのアカウントで使いますか？</p>
         <div className="flex gap-3">
           <button
-            onClick={() => onSelect('saku')}
+            onClick={() => onSelect('kenshin')}
             className="flex-1 py-4 rounded-2xl font-head font-bold text-sm text-white transition-transform active:scale-95"
             style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', boxShadow: '0 4px 20px rgba(124,58,237,0.3)' }}>
             👦 けんしん
           </button>
           <button
-            onClick={() => onSelect('takahashi')}
+            onClick={() => onSelect('rena')}
             className="flex-1 py-4 rounded-2xl font-head font-bold text-sm text-white transition-transform active:scale-95"
             style={{ background: 'linear-gradient(135deg,#be185d,#e11d48)', boxShadow: '0 4px 20px rgba(225,29,72,0.3)' }}>
             🌸 れなちゃん

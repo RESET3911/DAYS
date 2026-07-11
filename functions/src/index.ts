@@ -43,11 +43,20 @@ async function getNtfySettings(): Promise<NtfySettings> {
   try {
     const snap = await db.collection('ringi').doc('settings').get();
     const data = snap.data() || {};
+    // けんしん・れなちゃんは共有の単一トピック（ringi/settings.ntfyTopic）を購読する。
+    // 個別トピックが設定されている場合のみそれを優先。
+    const shared = data.ntfyTopic || '';
     return {
-      saku:      data.userA?.ntfyTopic || data.ntfyTopic || '',
-      takahashi: data.userB?.ntfyTopic || data.ntfyTopicB || '',
+      saku:      data.userA?.ntfyTopic || shared,
+      takahashi: data.userB?.ntfyTopic || shared,
     };
   } catch { return {}; }
+}
+
+// 複数ユーザー分を送る際、同一トピックへの二重送信を防ぐ
+async function sendNtfyToUsers(ntfy: NtfySettings, users: string[], title: string, body: string) {
+  const topics = new Set(users.map(u => ntfy[u as keyof NtfySettings] || '').filter(Boolean));
+  for (const topic of topics) await sendNtfy(topic, title, body);
 }
 
 async function sendNtfy(topic: string, title: string, body: string) {
@@ -113,9 +122,8 @@ export const dailyCalendarNotify = onSchedule(
         ? ['saku', 'takahashi']
         : [ev.assignee];
 
+      await sendNtfyToUsers(ntfy, toUsers, title, body);
       for (const u of toUsers) {
-        const topic = ntfy[u as keyof NtfySettings] || '';
-        await sendNtfy(topic, title, body);
         await writeNotification({ toUser: u, type: 'calendar_event_near', title, body, linkedId: doc.id });
       }
       await markSent(key);
@@ -142,8 +150,8 @@ export const dailyCalendarNotify = onSchedule(
       const title   = `${icon} ${ann.title}まで${label}${suffix}`;
       const body    = `${ann.month}月${ann.day}日`;
 
+      await sendNtfyToUsers(ntfy, ['saku', 'takahashi'], title, body);
       for (const u of ['saku', 'takahashi'] as const) {
-        await sendNtfy(ntfy[u] || '', title, body);
         await writeNotification({ toUser: u, type: 'anniversary_near', title, body, linkedId: doc.id });
       }
       await markSent(key);
@@ -169,8 +177,8 @@ export const dailyCalendarNotify = onSchedule(
         const u     = task.assignee || ev.assignee || 'both';
         const users = u === 'both' ? ['saku', 'takahashi'] : [u];
 
+        await sendNtfyToUsers(ntfy, users, title, body);
         for (const user of users) {
-          await sendNtfy(ntfy[user as keyof NtfySettings] || '', title, body);
           await writeNotification({ toUser: user, type: 'subtask_due', title, body, linkedId: doc.id });
         }
         await markSent(key);

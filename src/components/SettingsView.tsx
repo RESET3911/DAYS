@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import type { AlertSettings } from '../hooks/useAlerts';
 import type { CustomTemplate } from '../hooks/useSettings';
 import type { UserId } from '../types';
@@ -36,8 +38,24 @@ const VERSION = 'v1.0';
 export function SettingsView({
   userId, alertSettings, customTemplates, onAddTemplate, onRemoveTemplate, onAlertChange, onSwitchUser,
 }: Props) {
-  const userLabel    = userId === 'saku' ? '👦 けんしん' : '🌸 れなちゃん';
-  const partnerLabel = userId === 'saku' ? '🌸 れなちゃん' : '👦 けんしん';
+  const userLabel    = userId === 'kenshin' ? '👦 けんしん' : '🌸 れなちゃん';
+  const partnerLabel = userId === 'kenshin' ? '🌸 れなちゃん' : '👦 けんしん';
+
+  // ntfy トピック（RINGI と共有: ringi/settings.ntfyTopic）
+  const [ntfyTopic, setNtfyTopic] = useState('');
+  const [ntfySaved, setNtfySaved] = useState(false);
+  useEffect(() => {
+    getDoc(doc(db, 'ringi', 'settings'))
+      .then(snap => setNtfyTopic((snap.data()?.ntfyTopic as string) || ''))
+      .catch(() => {});
+  }, []);
+  const saveNtfy = async () => {
+    try {
+      await setDoc(doc(db, 'ringi', 'settings'), { ntfyTopic: ntfyTopic.trim() }, { merge: true });
+      setNtfySaved(true);
+      setTimeout(() => setNtfySaved(false), 2000);
+    } catch { /* noop */ }
+  };
 
   const [showTpl, setShowTpl] = useState(false);
   const [tIcon, setTIcon]     = useState('📋');
@@ -96,6 +114,32 @@ export function SettingsView({
             <Toggle on={alertSettings[key]} onToggle={() => onAlertChange(key, !alertSettings[key])} />
           </div>
         ))}
+      </div>
+
+      {/* Push notification (ntfy) */}
+      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+        <div className="px-4 py-3 text-xs font-bold uppercase tracking-wider"
+          style={{ background: 'var(--bg)', color: 'var(--text-3)', borderBottom: '1px solid var(--border)' }}>
+          🔔 プッシュ通知（ntfy）
+        </div>
+        <div className="px-4 py-4 space-y-2.5" style={{ background: 'var(--surface)' }}>
+          <div className="text-xs leading-relaxed" style={{ color: 'var(--text-3)' }}>
+            スマホに <b>ntfy</b> アプリを入れ、下のトピック名を購読すると、予定の追加やリマインダーがプッシュ通知で届きます（けんしん・れなちゃん共通）。
+          </div>
+          <div className="flex gap-2">
+            <input value={ntfyTopic} onChange={e => setNtfyTopic(e.target.value)} placeholder="例: st-days-xxxx"
+              className="flex-1 text-sm rounded-xl px-3 py-2 outline-none"
+              style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }} />
+            <button onClick={saveNtfy}
+              className="text-xs font-bold px-3 py-2 rounded-xl text-white active:scale-95 transition-all"
+              style={{ background: ntfySaved ? 'var(--emerald,#059669)' : 'var(--purple)' }}>
+              {ntfySaved ? '保存済' : '保存'}
+            </button>
+          </div>
+          <div className="text-xs" style={{ color: 'var(--text-3)' }}>
+            他人に推測されにくい固有の文字列にしてください。
+          </div>
+        </div>
       </div>
 
       {/* Links */}
